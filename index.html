@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поддержать проект</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #111;
+            font-family: Arial, sans-serif;
+            color: #fff;
+        }
+
+        .container {
+            width: 560px;
+            max-width: calc(100% - 30px);
+            padding: 30px;
+            background: #1c1c1c;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 28px;
+        }
+
+        p {
+            margin: 0 0 25px;
+            color: #aaa;
+        }
+
+        .widget {
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        iframe {
+            border: 0;
+            width: 500px;
+            height: 480px;
+            max-width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+        <h1>Поддержать проект</h1>
+        <p>Если хотите поддержать проект, воспользуйтесь формой ниже.</p>
+
+        <div class="widget">
+            <iframe
+                src="https://yoomoney.ru/quickpay/fundraise/widget?billNumber=1JK27E907KO.260812&"
+                width="500"
+                height="480"
+                frameborder="0"
+                allowtransparency="true"
+                scrolling="no">
+            </iframe>
+        </div>
+    </main>
+
+</body>
+</html>
