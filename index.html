@@ -3,77 +3,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поддержать проект</title>
-
+    <title>YouRain · Офлайн Заметки</title>
     <style>
+        /* ----- Базовые переменные (светлая тема по умолчанию) ----- */
+        :root {
+            --bg-color: #f5f7fb;
+            --panel-bg: #ffffff;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --primary-color: #4a90e2;
+            --primary-hover: #357abd;
+            --danger-color: #e74c3c;
+            --danger-hover: #c0392b;
+            --active-bg: #edf4fc;
+            --shadow: 0 4px 16px rgba(0,0,0,0.08);
+            --settings-bg: #ffffff;
+            --support-highlight: #f7c948;
+            --radius: 12px;
+        }
+
+        /* ----- Тёмная тема (активируется классом dark-theme на body) ----- */
+        body.dark-theme {
+            --bg-color: #1e1e1e;
+            --panel-bg: #2d2d2d;
+            --text-color: #ffffff;
+            --text-light: #aaaaaa;
+            --border-color: #3f3f3f;
+            --primary-color: #3a7cbd;
+            --primary-hover: #4a90e2;
+            --danger-color: #c0392b;
+            --danger-hover: #e74c3c;
+            --active-bg: #3a4b5c;
+            --shadow: 0 4px 16px rgba(0,0,0,0.5);
+            --settings-bg: #2d2d2d;
+            --support-highlight: #f7c948;
+        }
+
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            flex-shrink: 0;
+            transition: background 0.2s, border 0.2s;
+            position: relative;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            user-select: none;
+        }
+        .brand-you { color: #f7c948; }
+        .brand-rain {
+            color: var(--text-color);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .btn:hover { background-color: var(--primary-hover); }
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        .btn-danger:hover { background-color: var(--danger-hover); }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* ---- Кнопка настроек (шестерёнка) ---- */
+        .settings-toggle {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: transform 0.3s ease, color 0.2s;
+            padding: 0 6px;
+            font-weight: 300;
+        }
+        .settings-toggle:hover {
+            transform: rotate(60deg);
+            color: var(--text-color);
+        }
+
+        /* остальные элементы */
+        .notes-list {
+            flex: 1;
+            overflow-y: auto;
+            list-style: none;
+        }
+        .note-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .note-item:hover { background-color: var(--bg-color); }
+        .note-item.active { background-color: var(--active-bg); }
+        .note-item-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .note-item-date {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Main */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--panel-bg);
+            min-width: 0;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        /* Редактор */
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .editor-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .note-title-input {
+            width: 70%;
+            border: none;
+            background: transparent;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-color);
+            outline: none;
+        }
+        .note-textarea {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 20px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            color: var(--text-color);
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+        }
+        .no-note-selected {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #111;
-            font-family: Arial, sans-serif;
-            color: #fff;
+            color: var(--text-light);
+            font-size: 1.2rem;
         }
 
-        .container {
-            width: 560px;
-            max-width: calc(100% - 30px);
-            padding: 30px;
-            background: #1c1c1c;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        /* Страница настроек */
+        .settings-page {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            padding: 30px 40px;
+            background-color: var(--panel-bg);
+            overflow-y: auto;
         }
-
-        h1 {
-            margin: 0 0 10px;
-            font-size: 28px;
-        }
-
-        p {
-            margin: 0 0 25px;
-            color: #aaa;
-        }
-
-        .widget {
+        .settings-page.open {
             display: flex;
-            justify-content: center;
-            overflow: hidden;
-            border-radius: 10px;
+        }
+        .settings-page .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .settings-page .settings-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+        .settings-page .settings-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.2s;
+            line-height: 1;
+        }
+        .settings-page .settings-close-btn:hover {
+            color: var(--text-color);
         }
 
-        iframe {
-            border: 0;
-            width: 500px;
-            height: 480px;
+        .settings-page .setting-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 480px;
+        }
+        .settings-page .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+        }
+        .settings-page .setting-label {
+            font-weight: 500;
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+        .settings-page .setting-description {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        /* тумблер */
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle-track {
+            width: 44px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 40px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.25s;
+            flex-shrink: 0;
+        }
+        .toggle-track.active {
+            background: var(--primary-color);
+        }
+        .toggle-thumb {
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.25s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-track.active .toggle-thumb {
+            transform: translateX(20px);
+        }
+
+        .support-email {
+            background: var(--support-highlight);
+            color: #1e1e1e;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-block;
+            text-align: center;
+            transition: background 0.2s;
+            text-decoration: none;
+            width: fit-content;
+            border: none;
+            cursor: default;
+        }
+        .support-email:hover {
+            background: #f5b832;
+        }
+
+        .donation-wrap {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 4px;
+        }
+        .donation-wrap iframe {
             max-width: 100%;
+            border-radius: 6px;
+        }
+
+        .settings-divider {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 6px 0 10px 0;
+        }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 640px) {
+            .sidebar { width: 200px; }
+            .brand-title { font-size: 1rem; }
+            .settings-page { padding: 20px; }
+            .settings-page .setting-group { max-width: 100%; }
         }
     </style>
 </head>
-
 <body>
 
-    <main class="container">
-        <h1>Поддержать проект</h1>
-        <p>Если хотите поддержать проект, воспользуйтесь формой ниже.</p>
-
-        <div class="widget">
-            <iframe
-                src="https://yoomoney.ru/quickpay/fundraise/widget?billNumber=1JK27E907KO.260812&"
-                width="500"
-                height="480"
-                frameborder="0"
-                allowtransparency="true"
-                scrolling="no">
-            </iframe>
+    <!-- Боковая панель -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-title">
+                <span class="brand-you">You</span><span class="brand-rain">Rain</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn" id="add-btn">+ Новая</button>
+                <button class="settings-toggle" id="settings-toggle-btn" aria-label="Настройки">⚙</button>
+            </div>
         </div>
-    </main>
+        <ul class="notes-list" id="notes-list"></ul>
+    </div>
 
+    <!-- Область редактора / настроек -->
+    <div class="main-content">
+        <!-- Редактор заметки -->
+        <div id="editor-container" class="editor-container hidden">
+            <div class="editor-header">
+                <input type="text" class="note-title-input" id="note-title" placeholder="Без названия">
+                <button class="btn btn-danger" id="delete-btn">Удалить</button>
+            </div>
+            <textarea class="note-textarea" id="note-body" placeholder="Начните писать здесь..."></textarea>
+        </div>
+
+        <!-- Плейсхолдер, когда нет активной заметки -->
+        <div id="placeholder-container" class="no-note-selected">
+            <p>Выберите заметку или создайте новую</p>
+        </div>
+
+        <!-- Страница настроек -->
+        <div id="settings-page" class="settings-page">
+            <div class="settings-header">
+                <span class="settings-title">Настройки</span>
+                <button class="settings-close-btn" id="settings-close-btn" aria-label="Закрыть настройки">✕</button>
+            </div>
+            <div class="setting-group">
+                <!-- Тема -->
+                <div>
+                    <div class="setting-row">
+                        <span class="setting-label">Тёмная тема</span>
+                        <div class="toggle-wrap">
+                            <div class="toggle-track" id="theme-toggle-track">
+                                <div class="toggle-thumb"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-description">Включите тёмную тему для комфортной работы в тёмное время суток</div>
+                </div>
+
+                <hr class="settings-divider">
+
+                <!-- Пожертвования -->
+                <div>
+                    <span class="setting-label">Поддержать проект</span>
+                    <div class="setting-description" style="margin-bottom: 8px;">Ваша помощь помогает развивать приложение</div>
+                    <div class="donation-wrap">
+                        <iframe src="https://yoomoney.ru/quickpay/fundraise/button?billNumber=1JM0G8D2M7C.260815&" width="330" height="50" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
+                    </div>
+                </div>
+
+                <hr class="settings-divider">
+
+                <!-- Контакт поддержки -->
+                <div>
+                    <span class="setting-label">Служба поддержки</span>
+                    <div class="setting-description" style="margin-bottom: 6px;">По всем вопросам обращайтесь по электронной почте</div>
+                    <a href="mailto:support@yourain.ru" class="support-email">support@yourain.ru</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== DATA =====
+        let notes = JSON.parse(localStorage.getItem('offline_notes')) || [];
+        let activeNoteId = null;
+
+        // DOM
+        const notesList = document.getElementById('notes-list');
+        const addBtn = document.getElementById('add-btn');
+        const deleteBtn = document.getElementById('delete-btn');
+        const noteTitle = document.getElementById('note-title');
+        const noteBody = document.getElementById('note-body');
+        const editorContainer = document.getElementById('editor-container');
+        const placeholderContainer = document.getElementById('placeholder-container');
+        const settingsPage = document.getElementById('settings-page');
+        const settingsToggleBtn = document.getElementById('settings-toggle-btn');
+        const settingsCloseBtn = document.getElementById('settings-close-btn');
+        const themeToggleTrack = document.getElementById('theme-toggle-track');
+
+        // ===== LOCAL STORAGE =====
+        function saveToLocalStorage() {
+            localStorage.setItem('offline_notes', JSON.stringify(notes));
+        }
+
+        // ===== DATE =====
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('ru-RU', {
+                day: '2-digit',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // ===== RENDER LIST =====
+        function renderNotesList() {
+            notesList.innerHTML = '';
+            notes.sort((a, b) => b.updatedAt - a.updatedAt);
+            notes.forEach(note => {
+                const li = document.createElement('li');
+                li.className = `note-item ${note.id === activeNoteId ? 'active' : ''}`;
+                li.dataset.id = note.id;
+
+                const title = document.createElement('div');
+                title.className = 'note-item-title';
+                title.textContent = note.title.trim() || 'Без названия';
+
+                const date = document.createElement('div');
+                date.className = 'note-item-date';
+                date.textContent = formatDate(note.updatedAt);
+
+                li.appendChild(title);
+                li.appendChild(date);
+                li.addEventListener('click', () => selectNote(note.id));
+                notesList.appendChild(li);
+            });
+        }
+
+        // ===== SELECT NOTE =====
+        function selectNote(id) {
+            // Закрываем настройки, если открыты
+            closeSettings();
+
+            activeNoteId = id;
+            const note = notes.find(n => n.id === id);
+            if (note) {
+                noteTitle.value = note.title;
+                noteBody.value = note.body;
+                editorContainer.classList.remove('hidden');
+                placeholderContainer.classList.add('hidden');
+                settingsPage.classList.remove('open');
+            }
+            renderNotesList();
+        }
+
+        // ===== CREATE =====
+        function createNote() {
+            closeSettings();
+            const newNote = {
+                id: Date.now().toString(),
+                title: '',
+                body: '',
+                updatedAt: Date.now()
+            };
+            notes.unshift(newNote);
+            saveToLocalStorage();
+            selectNote(newNote.id);
+        }
+
+        // ===== UPDATE =====
+        function updateNote() {
+            if (!activeNoteId) return;
+            const note = notes.find(n => n.id === activeNoteId);
+            if (note) {
+                note.title = noteTitle.value;
+                note.body = noteBody.value;
+                note.updatedAt = Date.now();
+                saveToLocalStorage();
+
+                const activeItem = notesList.querySelector(`.note-item[data-id="${activeNoteId}"]`);
+                if (activeItem) {
+                    activeItem.querySelector('.note-item-title').textContent = noteTitle.value.trim() || 'Без названия';
+                    activeItem.querySelector('.note-item-date').textContent = formatDate(note.updatedAt);
+                }
+            }
+        }
+
+        // ===== DELETE =====
+        function deleteNote() {
+            if (!activeNoteId) return;
+            closeSettings();
+            notes = notes.filter(n => n.id !== activeNoteId);
+            saveToLocalStorage();
+            activeNoteId = null;
+            editorContainer.classList.add('hidden');
+            placeholderContainer.classList.remove('hidden');
+            renderNotesList();
+        }
+
+        // ===== ТЕМА =====
+        function setTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+                themeToggleTrack.classList.add('active');
+            } else {
+                document.body.classList.remove('dark-theme');
+                themeToggleTrack.classList.remove('active');
+            }
+            localStorage.setItem('yourain_theme', isDark ? 'dark' : 'light');
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark-theme');
+            setTheme(!isDark);
+        }
+
+        // Загружаем сохранённую тему
+        const savedTheme = localStorage.getItem('yourain_theme');
+        if (savedTheme === 'dark') {
+            setTheme(true);
+        } else {
+            setTheme(false);
+        }
+
+        // ===== УПРАВЛЕНИЕ НАСТРОЙКАМИ (открыть/закрыть) =====
+        function openSettings() {
+            // Скрываем редактор и плейсхолдер, показываем настройки
+            editorContainer.classList.add('hidden');
+            placeholderContainer.classList.add('hidden');
+            settingsPage.classList.add('open');
+            // Снимаем выделение с заметок
+            activeNoteId = null;
+            renderNotesList();
+        }
+
+        function closeSettings() {
+            settingsPage.classList.remove('open');
+            // Показываем либо редактор, либо плейсхолдер
+            if (activeNoteId) {
+                editorContainer.classList.remove('hidden');
+                placeholderContainer.classList.add('hidden');
+            } else {
+                editorContainer.classList.add('hidden');
+                placeholderContainer.classList.remove('hidden');
+            }
+        }
+
+        // Обработчики открытия/закрытия
+        settingsToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Если настройки уже открыты, закрываем их (или можно оставить как есть)
+            if (settingsPage.classList.contains('open')) {
+                closeSettings();
+            } else {
+                openSettings();
+            }
+        });
+
+        settingsCloseBtn.addEventListener('click', closeSettings);
+
+        // При клике на заметку или создании новой — настройки закрываются (уже в selectNote и createNote)
+
+        // ===== EVENT LISTENERS =====
+        addBtn.addEventListener('click', createNote);
+        deleteBtn.addEventListener('click', deleteNote);
+        noteTitle.addEventListener('input', updateNote);
+        noteBody.addEventListener('input', updateNote);
+        noteTitle.addEventListener('blur', renderNotesList);
+        noteBody.addEventListener('blur', renderNotesList);
+
+        themeToggleTrack.addEventListener('click', toggleTheme);
+
+        // ===== INIT =====
+        if (notes.length > 0) {
+            // Выбираем первую заметку, если есть
+            selectNote(notes[0].id);
+        } else {
+            placeholderContainer.classList.remove('hidden');
+            editorContainer.classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
