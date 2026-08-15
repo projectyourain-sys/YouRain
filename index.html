@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YouRain · Офлайн Заметки</title>
     <style>
         /* ----- Базовые переменные (светлая тема по умолчанию) ----- */
@@ -21,6 +21,7 @@
             --settings-bg: #ffffff;
             --support-highlight: #f7c948;
             --radius: 12px;
+            --sidebar-width: 280px;
         }
 
         /* ----- Тёмная тема (активируется классом dark-theme на body) ----- */
@@ -44,6 +45,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -52,33 +54,37 @@
             color: var(--text-color);
             display: flex;
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             transition: background 0.2s, color 0.2s;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 300px;
+            width: var(--sidebar-width);
             background-color: var(--panel-bg);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             height: 100%;
             flex-shrink: 0;
-            transition: background 0.2s, border 0.2s;
+            transition: background 0.2s, border 0.2s, transform 0.3s ease;
             position: relative;
+            z-index: 10;
         }
 
         .sidebar-header {
-            padding: 20px;
+            padding: 16px 16px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .brand-title {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 700;
             letter-spacing: -0.5px;
             user-select: none;
@@ -98,8 +104,12 @@
             font-weight: 500;
             font-size: 0.9rem;
             transition: background 0.2s;
+            touch-action: manipulation;
+            min-height: 40px;
+            min-width: 44px;
         }
         .btn:hover { background-color: var(--primary-hover); }
+        .btn:active { transform: scale(0.96); }
         .btn-danger {
             background-color: var(--danger-color);
         }
@@ -124,35 +134,52 @@
             transition: transform 0.3s ease, color 0.2s;
             padding: 0 6px;
             font-weight: 300;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .settings-toggle:hover {
             transform: rotate(60deg);
             color: var(--text-color);
+        }
+        .settings-toggle:active {
+            transform: rotate(60deg) scale(0.9);
         }
 
         /* остальные элементы */
         .notes-list {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden;
             list-style: none;
+            -webkit-overflow-scrolling: touch;
         }
         .note-item {
-            padding: 15px 20px;
+            padding: 14px 16px;
             border-bottom: 1px solid var(--border-color);
             cursor: pointer;
             transition: background 0.2s;
+            touch-action: manipulation;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .note-item:hover { background-color: var(--bg-color); }
         .note-item.active { background-color: var(--active-bg); }
+        .note-item:active { opacity: 0.7; }
         .note-item-title {
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-size: 1rem;
         }
         .note-item-date {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-light);
         }
 
@@ -172,34 +199,41 @@
             display: flex;
             flex-direction: column;
             flex: 1;
+            min-height: 0;
         }
         .editor-header {
-            padding: 15px 20px;
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            flex-shrink: 0;
         }
         .note-title-input {
-            width: 70%;
+            width: 65%;
             border: none;
             background: transparent;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: var(--text-color);
             outline: none;
+            min-height: 40px;
         }
         .note-textarea {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 20px;
-            font-size: 1.1rem;
+            padding: 16px 20px;
+            font-size: 1rem;
             font-family: inherit;
             color: var(--text-color);
             resize: none;
             outline: none;
             line-height: 1.6;
+            -webkit-overflow-scrolling: touch;
+            min-height: 200px;
         }
         .no-note-selected {
             flex: 1;
@@ -207,7 +241,9 @@
             justify-content: center;
             align-items: center;
             color: var(--text-light);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            padding: 20px;
+            text-align: center;
         }
 
         /* Страница настроек */
@@ -215,9 +251,10 @@
             display: none;
             flex-direction: column;
             flex: 1;
-            padding: 30px 40px;
+            padding: 20px 24px;
             background-color: var(--panel-bg);
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .settings-page.open {
             display: flex;
@@ -227,24 +264,33 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 16px;
-            margin-bottom: 24px;
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+            flex-shrink: 0;
         }
         .settings-page .settings-title {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 600;
         }
         .settings-page .settings-close-btn {
             background: transparent;
             border: none;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             cursor: pointer;
             color: var(--text-light);
             transition: color 0.2s;
             line-height: 1;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .settings-page .settings-close-btn:hover {
             color: var(--text-color);
+        }
+        .settings-page .settings-close-btn:active {
+            transform: scale(0.9);
         }
 
         .settings-page .setting-group {
@@ -252,12 +298,14 @@
             flex-direction: column;
             gap: 20px;
             max-width: 480px;
+            width: 100%;
         }
         .settings-page .setting-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 6px 0;
+            gap: 12px;
         }
         .settings-page .setting-label {
             font-weight: 500;
@@ -275,6 +323,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-shrink: 0;
         }
         .toggle-track {
             width: 44px;
@@ -285,6 +334,7 @@
             cursor: pointer;
             transition: background 0.25s;
             flex-shrink: 0;
+            touch-action: manipulation;
         }
         .toggle-track.active {
             background: var(--primary-color);
@@ -307,7 +357,7 @@
         .support-email {
             background: var(--support-highlight);
             color: #1e1e1e;
-            padding: 6px 18px;
+            padding: 8px 18px;
             border-radius: 30px;
             font-weight: 600;
             font-size: 0.95rem;
@@ -318,34 +368,302 @@
             width: fit-content;
             border: none;
             cursor: default;
+            touch-action: manipulation;
         }
         .support-email:hover {
             background: #f5b832;
+        }
+        .support-email:active {
+            transform: scale(0.97);
         }
 
         .donation-wrap {
             display: flex;
             justify-content: flex-start;
             margin-top: 4px;
+            width: 100%;
         }
         .donation-wrap iframe {
             max-width: 100%;
             border-radius: 6px;
+            width: 100%;
+            max-width: 330px;
         }
 
         .settings-divider {
             border: none;
             border-top: 1px solid var(--border-color);
-            margin: 6px 0 10px 0;
+            margin: 4px 0 10px 0;
         }
 
         .hidden { display: none !important; }
 
+        /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 240px;
+            }
+            .sidebar-header {
+                padding: 12px 12px;
+            }
+            .brand-title {
+                font-size: 1.1rem;
+            }
+            .btn {
+                font-size: 0.8rem;
+                padding: 6px 12px;
+                min-height: 36px;
+            }
+            .note-item {
+                padding: 12px 14px;
+                min-height: 52px;
+            }
+            .note-item-title {
+                font-size: 0.95rem;
+            }
+            .editor-header {
+                padding: 10px 12px;
+            }
+            .note-title-input {
+                font-size: 1.1rem;
+                width: 60%;
+            }
+            .note-textarea {
+                padding: 14px 16px;
+                font-size: 0.95rem;
+            }
+            .settings-page {
+                padding: 16px 18px;
+            }
+            .settings-page .settings-title {
+                font-size: 1.2rem;
+            }
+            .donation-wrap iframe {
+                max-width: 280px;
+                height: 44px;
+            }
+        }
+
         @media (max-width: 640px) {
-            .sidebar { width: 200px; }
-            .brand-title { font-size: 1rem; }
-            .settings-page { padding: 20px; }
-            .settings-page .setting-group { max-width: 100%; }
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 45vh;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                flex-shrink: 0;
+            }
+            .sidebar-header {
+                padding: 10px 14px;
+                flex-wrap: nowrap;
+            }
+            .brand-title {
+                font-size: 1rem;
+            }
+            .notes-list {
+                max-height: calc(45vh - 60px);
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .note-item {
+                padding: 10px 14px;
+                min-height: 44px;
+            }
+            .note-item-title {
+                font-size: 0.9rem;
+            }
+            .main-content {
+                flex: 1;
+                min-height: 55vh;
+            }
+            .editor-header {
+                padding: 8px 12px;
+                flex-wrap: nowrap;
+            }
+            .note-title-input {
+                font-size: 1rem;
+                width: 55%;
+                min-height: 32px;
+            }
+            .note-textarea {
+                padding: 12px 14px;
+                font-size: 0.9rem;
+                min-height: 150px;
+            }
+            .btn {
+                font-size: 0.75rem;
+                padding: 5px 10px;
+                min-height: 32px;
+                min-width: 36px;
+            }
+            .btn-danger {
+                font-size: 0.75rem;
+            }
+            .settings-toggle {
+                font-size: 1.2rem;
+                min-width: 36px;
+                min-height: 36px;
+            }
+            .settings-page {
+                padding: 14px 16px;
+            }
+            .settings-page .settings-title {
+                font-size: 1.1rem;
+            }
+            .settings-page .setting-group {
+                gap: 16px;
+            }
+            .settings-page .setting-row {
+                padding: 4px 0;
+            }
+            .settings-page .setting-label {
+                font-size: 0.9rem;
+            }
+            .settings-page .setting-description {
+                font-size: 0.8rem;
+            }
+            .support-email {
+                font-size: 0.85rem;
+                padding: 6px 14px;
+            }
+            .toggle-track {
+                width: 38px;
+                height: 20px;
+            }
+            .toggle-thumb {
+                width: 14px;
+                height: 14px;
+                top: 3px;
+                left: 3px;
+            }
+            .toggle-track.active .toggle-thumb {
+                transform: translateX(18px);
+            }
+            .donation-wrap iframe {
+                max-width: 250px;
+                height: 40px;
+            }
+            .no-note-selected {
+                font-size: 0.95rem;
+                padding: 16px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .sidebar-header {
+                padding: 8px 10px;
+            }
+            .brand-title {
+                font-size: 0.85rem;
+            }
+            .btn {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+                min-height: 28px;
+                min-width: 32px;
+            }
+            .settings-toggle {
+                font-size: 1rem;
+                min-width: 32px;
+                min-height: 32px;
+            }
+            .note-item {
+                padding: 8px 10px;
+                min-height: 38px;
+            }
+            .note-item-title {
+                font-size: 0.8rem;
+            }
+            .note-item-date {
+                font-size: 0.65rem;
+            }
+            .note-title-input {
+                font-size: 0.9rem;
+                width: 50%;
+                min-height: 28px;
+            }
+            .note-textarea {
+                padding: 10px 12px;
+                font-size: 0.85rem;
+                min-height: 120px;
+            }
+            .editor-header {
+                padding: 6px 10px;
+            }
+            .settings-page {
+                padding: 10px 12px;
+            }
+            .settings-page .settings-title {
+                font-size: 1rem;
+            }
+            .settings-page .setting-label {
+                font-size: 0.85rem;
+            }
+            .support-email {
+                font-size: 0.8rem;
+                padding: 5px 12px;
+            }
+            .donation-wrap iframe {
+                max-width: 200px;
+                height: 36px;
+            }
+        }
+
+        /* Для устройств с сенсорным экраном — увеличенные области касания */
+        @media (hover: none) and (pointer: coarse) {
+            .note-item {
+                min-height: 50px;
+            }
+            .btn {
+                min-height: 40px;
+            }
+            .settings-toggle {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            .note-title-input {
+                min-height: 36px;
+            }
+            .settings-page .settings-close-btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            .toggle-track {
+                min-height: 28px;
+                min-width: 50px;
+            }
+        }
+
+        /* Плавный скролл для всех элементов */
+        .notes-list,
+        .note-textarea,
+        .settings-page {
+            scroll-behavior: smooth;
+        }
+
+        /* Убираем скроллбар для эстетики (но оставляем функциональность) */
+        .notes-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .notes-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .notes-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        .settings-page::-webkit-scrollbar {
+            width: 4px;
+        }
+        .settings-page::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .settings-page::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -357,7 +675,7 @@
             <div class="brand-title">
                 <span class="brand-you">You</span><span class="brand-rain">Rain</span>
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
+            <div style="display: flex; gap: 6px; align-items: center;">
                 <button class="btn" id="add-btn">+ Новая</button>
                 <button class="settings-toggle" id="settings-toggle-btn" aria-label="Настройки">⚙</button>
             </div>
@@ -511,6 +829,10 @@
             notes.unshift(newNote);
             saveToLocalStorage();
             selectNote(newNote.id);
+            // Фокус на заголовок на мобильных устройствах
+            setTimeout(() => {
+                noteTitle.focus();
+            }, 300);
         }
 
         // ===== UPDATE =====
@@ -594,7 +916,6 @@
         // Обработчики открытия/закрытия
         settingsToggleBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Если настройки уже открыты, закрываем их (или можно оставить как есть)
             if (settingsPage.classList.contains('open')) {
                 closeSettings();
             } else {
@@ -603,8 +924,6 @@
         });
 
         settingsCloseBtn.addEventListener('click', closeSettings);
-
-        // При клике на заметку или создании новой — настройки закрываются (уже в selectNote и createNote)
 
         // ===== EVENT LISTENERS =====
         addBtn.addEventListener('click', createNote);
@@ -616,9 +935,14 @@
 
         themeToggleTrack.addEventListener('click', toggleTheme);
 
+        // Поддержка тач-событий для тумблера
+        themeToggleTrack.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            toggleTheme();
+        });
+
         // ===== INIT =====
         if (notes.length > 0) {
-            // Выбираем первую заметку, если есть
             selectNote(notes[0].id);
         } else {
             placeholderContainer.classList.remove('hidden');
