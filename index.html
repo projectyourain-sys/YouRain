@@ -872,7 +872,7 @@
 
                 <div>
                     <span class="setting-label">Горячие клавиши</span>
-                    <div class="setting-description" style="margin-bottom: 12px;">Работают глобально, не конфликтуют с браузером</div>
+                    <div class="setting-description" style="margin-bottom: 12px;">Работают на любой раскладке, не конфликтуют с браузером</div>
                     <div class="shortcut-list">
                         <span class="shortcut-key">Ctrl+Shift+N</span><span>Новая заметка</span>
                         <span class="shortcut-key">Ctrl+Shift+D</span><span>Удалить заметку</span>
@@ -1179,26 +1179,26 @@
             document.body.style.overflow = '';
         }
 
-        // ===== Keyboard Shortcuts (fixed conflicts) =====
+        // ===== Keyboard Shortcuts (layout-independent via e.code) =====
         document.addEventListener('keydown', (e) => {
             const mod = e.ctrlKey || e.metaKey;
-            const key = e.key.toLowerCase();
+            const code = e.code;
 
-            // Global shortcuts (work everywhere except when typing in inputs without modifiers)
+            // Global shortcuts using e.code (works on any keyboard layout)
             if (mod && e.shiftKey) {
-                if (key === 'n') {
+                if (code === 'KeyN') {
                     e.preventDefault();
                     e.stopPropagation();
                     createNote();
                     return;
                 }
-                if (key === 'd') {
+                if (code === 'KeyD') {
                     e.preventDefault();
                     e.stopPropagation();
                     if (activeNoteId) promptDelete();
                     return;
                 }
-                if (key === 'o') {
+                if (code === 'KeyO') {
                     e.preventDefault();
                     e.stopPropagation();
                     openSettings();
@@ -1206,8 +1206,8 @@
                 }
             }
 
-            // Escape closes modals and settings
-            if (key === 'escape') {
+            // Escape closes modals, settings and drawer
+            if (code === 'Escape') {
                 if (deleteModal.classList.contains('open')) {
                     e.preventDefault();
                     cancelDelete();
@@ -1218,7 +1218,6 @@
                     closeSettings();
                     return;
                 }
-                // On mobile, close drawer
                 if (sidebar.classList.contains('open')) {
                     e.preventDefault();
                     closeDrawer();
@@ -1227,7 +1226,7 @@
             }
 
             // Enter confirms delete modal
-            if (key === 'enter' && deleteModal.classList.contains('open')) {
+            if (code === 'Enter' && deleteModal.classList.contains('open')) {
                 e.preventDefault();
                 confirmDelete();
                 return;
