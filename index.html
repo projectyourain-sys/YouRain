@@ -6,40 +6,56 @@
     <meta name="yandex-verification" content="ad2b8e72a7ebc134" />
     <title>YouRain · Офлайн Заметки</title>
     <style>
-        /* ----- Базовые переменные (светлая тема по умолчанию) ----- */
+        /* ===== Design Tokens ===== */
         :root {
-            --bg-color: #f5f7fb;
+            --bg-color: #f0f2f5;
             --panel-bg: #ffffff;
-            --text-color: #333333;
-            --text-light: #666666;
-            --border-color: #e0e0e0;
-            --primary-color: #4a90e2;
-            --primary-hover: #357abd;
-            --danger-color: #e74c3c;
-            --danger-hover: #c0392b;
-            --active-bg: #edf4fc;
-            --shadow: 0 4px 16px rgba(0,0,0,0.08);
-            --settings-bg: #ffffff;
-            --support-highlight: #f7c948;
-            --radius: 12px;
-            --sidebar-width: 280px;
+            --surface-bg: #f8f9fa;
+            --text-color: #1a1a2e;
+            --text-light: #6b7280;
+            --text-muted: #9ca3af;
+            --border-color: #e5e7eb;
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --danger-color: #ef4444;
+            --danger-hover: #dc2626;
+            --danger-light: #fef2f2;
+            --active-bg: #eef2ff;
+            --active-border: #4f46e5;
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            --radius-sm: 6px;
+            --radius: 10px;
+            --radius-lg: 16px;
+            --sidebar-width: 320px;
+            --header-height: 64px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
-        /* ----- Тёмная тема (активируется классом dark-theme на body) ----- */
         body.dark-theme {
-            --bg-color: #1e1e1e;
-            --panel-bg: #2d2d2d;
-            --text-color: #ffffff;
-            --text-light: #aaaaaa;
-            --border-color: #3f3f3f;
-            --primary-color: #3a7cbd;
-            --primary-hover: #4a90e2;
-            --danger-color: #c0392b;
-            --danger-hover: #e74c3c;
-            --active-bg: #3a4b5c;
-            --shadow: 0 4px 16px rgba(0,0,0,0.5);
-            --settings-bg: #2d2d2d;
-            --support-highlight: #f7c948;
+            --bg-color: #0f0f1a;
+            --panel-bg: #1a1a2e;
+            --surface-bg: #16162a;
+            --text-color: #f1f5f9;
+            --text-light: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #2d2d44;
+            --primary-color: #818cf8;
+            --primary-hover: #a5b4fc;
+            --primary-light: #1e1b4b;
+            --danger-color: #f87171;
+            --danger-hover: #fca5a5;
+            --danger-light: #450a0a;
+            --active-bg: #1e1b4b;
+            --active-border: #818cf8;
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.3);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -4px rgba(0,0,0,0.4);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.5), 0 8px 10px -6px rgba(0,0,0,0.5);
         }
 
         * {
@@ -49,18 +65,29 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: var(--font-sans);
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
-            transition: background 0.2s, color 0.2s;
+            transition: background 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Sidebar */
+        /* ===== Scrollbar ===== */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+        /* ===== Sidebar ===== */
         .sidebar {
             width: var(--sidebar-width);
             background-color: var(--panel-bg);
@@ -69,271 +96,420 @@
             flex-direction: column;
             height: 100%;
             flex-shrink: 0;
-            transition: background 0.2s, border 0.2s, transform 0.3s ease;
+            transition: var(--transition);
             position: relative;
-            z-index: 10;
+            z-index: 100;
         }
 
         .sidebar-header {
-            padding: 16px 16px;
+            padding: 0 20px;
+            height: var(--header-height);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
+            gap: 12px;
+            flex-shrink: 0;
         }
 
         .brand-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.8px;
             user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 2px;
         }
-        .brand-you { color: #f7c948; }
-        .brand-rain {
-            color: var(--text-color);
-        }
+        .brand-you { color: #f59e0b; }
+        .brand-rain { color: var(--primary-color); }
 
         .btn {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: background 0.2s;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: var(--transition);
             touch-action: manipulation;
-            min-height: 40px;
-            min-width: 44px;
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
         }
-        .btn:hover { background-color: var(--primary-hover); }
-        .btn:active { transform: scale(0.96); }
+        .btn:hover { 
+            background-color: var(--primary-hover); 
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+        .btn:active { transform: translateY(0) scale(0.97); }
+        
         .btn-danger {
             background-color: var(--danger-color);
         }
         .btn-danger:hover { background-color: var(--danger-hover); }
+        
         .btn-secondary {
-            background-color: transparent;
+            background-color: var(--surface-bg);
             color: var(--text-color);
             border: 1px solid var(--border-color);
+            box-shadow: none;
         }
         .btn-secondary:hover {
             background-color: var(--bg-color);
+            border-color: var(--text-light);
         }
 
-        /* ---- Кнопка настроек (шестерёнка) ---- */
-        .settings-toggle {
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border-radius: var(--radius-sm);
             background: transparent;
-            border: none;
-            font-size: 1.5rem;
-            line-height: 1;
-            cursor: pointer;
             color: var(--text-light);
-            transition: transform 0.3s ease, color 0.2s;
-            padding: 0 6px;
-            font-weight: 300;
-            min-width: 44px;
-            min-height: 44px;
-            display: flex;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            transition: var(--transition);
+            font-size: 1.1rem;
         }
-        .settings-toggle:hover {
-            transform: rotate(60deg);
+        .btn-icon:hover {
+            background: var(--surface-bg);
             color: var(--text-color);
         }
-        .settings-toggle:active {
-            transform: rotate(60deg) scale(0.9);
-        }
 
-        /* остальные элементы */
+        /* Search */
+        .search-box {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--surface-bg);
+            color: var(--text-color);
+            font-size: 0.875rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 10px center;
+        }
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .search-input::placeholder { color: var(--text-muted); }
+
+        /* Notes List */
         .notes-list {
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
             list-style: none;
-            -webkit-overflow-scrolling: touch;
+            padding: 8px;
         }
         .note-item {
             padding: 14px 16px;
-            border-bottom: 1px solid var(--border-color);
+            border-radius: var(--radius);
             cursor: pointer;
-            transition: background 0.2s;
+            transition: var(--transition);
             touch-action: manipulation;
-            min-height: 60px;
+            min-height: 64px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            gap: 6px;
+            margin-bottom: 4px;
+            border: 1px solid transparent;
+            position: relative;
         }
-        .note-item:hover { background-color: var(--bg-color); }
-        .note-item.active { background-color: var(--active-bg); }
-        .note-item:active { opacity: 0.7; }
+        .note-item:hover { 
+            background-color: var(--surface-bg);
+            border-color: var(--border-color);
+        }
+        .note-item.active { 
+            background-color: var(--active-bg);
+            border-color: var(--active-border);
+            box-shadow: var(--shadow-sm);
+        }
+        .note-item:active { opacity: 0.8; }
+        
         .note-item-title {
             font-weight: 600;
-            margin-bottom: 4px;
+            font-size: 0.95rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            font-size: 1rem;
+            color: var(--text-color);
+            line-height: 1.4;
+        }
+        .note-item-preview {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.3;
         }
         .note-item-date {
-            font-size: 0.75rem;
-            color: var(--text-light);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .note-item-date::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: 50%;
         }
 
-        /* Main */
+        .empty-list {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+        .empty-list-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* ===== Main Content ===== */
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-color: var(--panel-bg);
+            background-color: var(--bg-color);
             min-width: 0;
-            transition: background 0.2s;
             position: relative;
         }
 
-        /* Редактор */
+        /* Mobile Header */
+        .mobile-header {
+            display: none;
+            height: var(--header-height);
+            padding: 0 16px;
+            background: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            z-index: 50;
+        }
+
+        /* Editor */
         .editor-container {
-            display: flex;
+            display: none;
             flex-direction: column;
             flex: 1;
             min-height: 0;
+            background: var(--panel-bg);
+            margin: 16px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            overflow: hidden;
         }
+        .editor-container.visible { display: flex; }
+
         .editor-header {
-            padding: 12px 16px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
+            gap: 12px;
             flex-shrink: 0;
+            background: var(--surface-bg);
+        }
+        .editor-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 0;
         }
         .note-title-input {
-            width: 65%;
+            width: 100%;
             border: none;
             background: transparent;
-            font-size: 1.3rem;
-            font-weight: bold;
+            font-size: 1.25rem;
+            font-weight: 700;
             color: var(--text-color);
             outline: none;
-            min-height: 40px;
+            font-family: inherit;
         }
+        .note-title-input::placeholder { color: var(--text-muted); }
+        
+        .editor-info {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .save-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #10b981;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .save-indicator.visible { opacity: 1; }
+        .save-indicator::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
         .note-textarea {
             flex: 1;
             border: none;
             background: transparent;
-            padding: 16px 20px;
+            padding: 20px;
             font-size: 1rem;
             font-family: inherit;
             color: var(--text-color);
             resize: none;
             outline: none;
-            line-height: 1.6;
+            line-height: 1.7;
             -webkit-overflow-scrolling: touch;
             min-height: 200px;
         }
+        .note-textarea::placeholder { color: var(--text-muted); }
+
+        .editor-footer {
+            padding: 10px 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: var(--surface-bg);
+            flex-shrink: 0;
+        }
+
+        /* Placeholder */
         .no-note-selected {
             flex: 1;
-            display: flex;
+            display: none;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             color: var(--text-light);
-            font-size: 1.1rem;
-            padding: 20px;
+            padding: 40px;
             text-align: center;
+            gap: 16px;
+        }
+        .no-note-selected.visible { display: flex; }
+        .placeholder-icon {
+            font-size: 4rem;
+            opacity: 0.3;
+            margin-bottom: 8px;
+        }
+        .placeholder-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .placeholder-hint {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            max-width: 300px;
+            line-height: 1.5;
         }
 
-        /* Страница настроек */
+        /* ===== Settings ===== */
         .settings-page {
             display: none;
             flex-direction: column;
             flex: 1;
-            padding: 20px 24px;
-            background-color: var(--panel-bg);
+            padding: 24px 32px;
+            background: var(--panel-bg);
+            margin: 16px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            max-width: 600px;
         }
-        .settings-page.open {
-            display: flex;
-        }
-        .settings-page .settings-header {
+        .settings-page.open { display: flex; }
+
+        .settings-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 14px;
-            margin-bottom: 20px;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
             flex-shrink: 0;
         }
-        .settings-page .settings-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-        .settings-page .settings-close-btn {
-            background: transparent;
-            border: none;
-            font-size: 1.6rem;
-            cursor: pointer;
-            color: var(--text-light);
-            transition: color 0.2s;
-            line-height: 1;
-            min-width: 44px;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .settings-page .settings-close-btn:hover {
-            color: var(--text-color);
-        }
-        .settings-page .settings-close-btn:active {
-            transform: scale(0.9);
+        .settings-title {
+            font-size: 1.5rem;
+            font-weight: 700;
         }
 
-        .settings-page .setting-group {
+        .setting-group {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            max-width: 480px;
+            gap: 24px;
             width: 100%;
         }
-        .settings-page .setting-row {
+        .setting-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 6px 0;
-            gap: 12px;
+            padding: 8px 0;
+            gap: 16px;
         }
-        .settings-page .setting-label {
-            font-weight: 500;
+        .setting-info { flex: 1; min-width: 0; }
+        .setting-label {
+            font-weight: 600;
             font-size: 1rem;
             color: var(--text-color);
+            display: block;
+            margin-bottom: 4px;
         }
-        .settings-page .setting-description {
-            font-size: 0.85rem;
+        .setting-description {
+            font-size: 0.875rem;
             color: var(--text-light);
-            margin-top: 2px;
+            line-height: 1.4;
         }
 
-        /* тумблер */
-        .toggle-wrap {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-        }
+        /* Toggle */
         .toggle-track {
-            width: 44px;
-            height: 24px;
-            background: #ccc;
+            width: 48px;
+            height: 26px;
+            background: var(--border-color);
             border-radius: 40px;
             position: relative;
             cursor: pointer;
-            transition: background 0.25s;
+            transition: background 0.3s;
             flex-shrink: 0;
             touch-action: manipulation;
         }
@@ -341,107 +517,196 @@
             background: var(--primary-color);
         }
         .toggle-thumb {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             background: white;
             border-radius: 50%;
             position: absolute;
             top: 3px;
             left: 3px;
-            transition: transform 0.25s;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
         .toggle-track.active .toggle-thumb {
-            transform: translateX(20px);
+            transform: translateX(22px);
         }
 
         .support-email {
-            background: var(--support-highlight);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
             color: #1e1e1e;
-            padding: 8px 18px;
+            padding: 10px 20px;
             border-radius: 30px;
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-weight: 700;
+            font-size: 0.9rem;
             display: inline-block;
             text-align: center;
-            transition: background 0.2s;
+            transition: var(--transition);
             text-decoration: none;
             width: fit-content;
             border: none;
-            cursor: default;
-            touch-action: manipulation;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
         }
         .support-email:hover {
-            background: #f5b832;
-        }
-        .support-email:active {
-            transform: scale(0.97);
-        }
-
-        .donation-wrap {
-            display: flex;
-            justify-content: flex-start;
-            margin-top: 4px;
-            width: 100%;
-        }
-        .donation-wrap iframe {
-            max-width: 100%;
-            border-radius: 6px;
-            width: 100%;
-            max-width: 330px;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            filter: brightness(1.05);
         }
 
         .settings-divider {
             border: none;
             border-top: 1px solid var(--border-color);
-            margin: 4px 0 10px 0;
+            margin: 0;
         }
 
+        .shortcut-list {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px 16px;
+            font-size: 0.85rem;
+        }
+        .shortcut-key {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+
+        /* ===== Modal ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .modal-overlay.open {
+            display: flex;
+            opacity: 1;
+        }
+        .modal {
+            background: var(--panel-bg);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+        .modal-overlay.open .modal {
+            transform: scale(1);
+        }
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .modal-text {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* ===== Toast ===== */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--panel-bg);
+            color: var(--text-color);
+            padding: 12px 18px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+            pointer-events: auto;
+            max-width: 320px;
+        }
+        .toast-success { border-left: 4px solid #10b981; }
+        .toast-error { border-left: 4px solid #ef4444; }
+        .toast-info { border-left: 4px solid var(--primary-color); }
+
+        @keyframes toastIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes toastOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* ===== Mobile Drawer ===== */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(2px);
+            z-index: 90;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .drawer-overlay.open {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ===== Animations ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        /* ===== Hidden ===== */
         .hidden { display: none !important; }
 
-        /* ===== МОБИЛЬНАЯ АДАПТАЦИЯ ===== */
+        /* ===== Responsive ===== */
         @media (max-width: 768px) {
             :root {
-                --sidebar-width: 240px;
+                --sidebar-width: 280px;
             }
-            .sidebar-header {
-                padding: 12px 12px;
-            }
-            .brand-title {
-                font-size: 1.1rem;
-            }
-            .btn {
-                font-size: 0.8rem;
-                padding: 6px 12px;
-                min-height: 36px;
-            }
-            .note-item {
-                padding: 12px 14px;
-                min-height: 52px;
-            }
-            .note-item-title {
-                font-size: 0.95rem;
-            }
-            .editor-header {
-                padding: 10px 12px;
-            }
-            .note-title-input {
-                font-size: 1.1rem;
-                width: 60%;
-            }
-            .note-textarea {
-                padding: 14px 16px;
-                font-size: 0.95rem;
+            .editor-container, .settings-page {
+                margin: 0;
+                border-radius: 0;
+                border: none;
+                box-shadow: none;
             }
             .settings-page {
-                padding: 16px 18px;
-            }
-            .settings-page .settings-title {
-                font-size: 1.2rem;
-            }
-            .donation-wrap iframe {
-                max-width: 280px;
-                height: 44px;
+                padding: 20px;
+                max-width: none;
             }
         }
 
@@ -450,225 +715,63 @@
                 flex-direction: column;
             }
             .sidebar {
-                width: 100%;
-                height: auto;
-                max-height: 45vh;
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100%;
+                transform: translateX(-100%);
+                box-shadow: var(--shadow-xl);
                 border-right: none;
-                border-bottom: 1px solid var(--border-color);
-                flex-shrink: 0;
             }
-            .sidebar-header {
-                padding: 10px 14px;
-                flex-wrap: nowrap;
+            .sidebar.open {
+                transform: translateX(0);
             }
-            .brand-title {
-                font-size: 1rem;
-            }
-            .notes-list {
-                max-height: calc(45vh - 60px);
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            .note-item {
-                padding: 10px 14px;
-                min-height: 44px;
-            }
-            .note-item-title {
-                font-size: 0.9rem;
+            .mobile-header {
+                display: flex;
             }
             .main-content {
-                flex: 1;
-                min-height: 55vh;
+                margin-top: var(--header-height);
+                height: calc(100dvh - var(--header-height));
+            }
+            .editor-container, .settings-page {
+                margin: 0;
             }
             .editor-header {
-                padding: 8px 12px;
-                flex-wrap: nowrap;
+                padding: 12px 16px;
             }
             .note-title-input {
-                font-size: 1rem;
-                width: 55%;
-                min-height: 32px;
-            }
-            .note-textarea {
-                padding: 12px 14px;
-                font-size: 0.9rem;
-                min-height: 150px;
-            }
-            .btn {
-                font-size: 0.75rem;
-                padding: 5px 10px;
-                min-height: 32px;
-                min-width: 36px;
-            }
-            .btn-danger {
-                font-size: 0.75rem;
-            }
-            .settings-toggle {
-                font-size: 1.2rem;
-                min-width: 36px;
-                min-height: 36px;
-            }
-            .settings-page {
-                padding: 14px 16px;
-            }
-            .settings-page .settings-title {
                 font-size: 1.1rem;
             }
-            .settings-page .setting-group {
-                gap: 16px;
-            }
-            .settings-page .setting-row {
-                padding: 4px 0;
-            }
-            .settings-page .setting-label {
-                font-size: 0.9rem;
-            }
-            .settings-page .setting-description {
-                font-size: 0.8rem;
-            }
-            .support-email {
-                font-size: 0.85rem;
-                padding: 6px 14px;
-            }
-            .toggle-track {
-                width: 38px;
-                height: 20px;
-            }
-            .toggle-thumb {
-                width: 14px;
-                height: 14px;
-                top: 3px;
-                left: 3px;
-            }
-            .toggle-track.active .toggle-thumb {
-                transform: translateX(18px);
-            }
-            .donation-wrap iframe {
-                max-width: 250px;
-                height: 40px;
-            }
-            .no-note-selected {
-                font-size: 0.95rem;
+            .note-textarea {
                 padding: 16px;
+                font-size: 1rem;
+            }
+            .toast-container {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+            }
+            .toast {
+                max-width: none;
             }
         }
 
         @media (max-width: 400px) {
-            .sidebar-header {
-                padding: 8px 10px;
-            }
-            .brand-title {
-                font-size: 0.85rem;
-            }
-            .btn {
-                font-size: 0.7rem;
-                padding: 4px 8px;
-                min-height: 28px;
-                min-width: 32px;
-            }
-            .settings-toggle {
-                font-size: 1rem;
-                min-width: 32px;
-                min-height: 32px;
-            }
-            .note-item {
-                padding: 8px 10px;
-                min-height: 38px;
-            }
-            .note-item-title {
-                font-size: 0.8rem;
-            }
-            .note-item-date {
-                font-size: 0.65rem;
-            }
-            .note-title-input {
-                font-size: 0.9rem;
-                width: 50%;
-                min-height: 28px;
-            }
-            .note-textarea {
-                padding: 10px 12px;
-                font-size: 0.85rem;
-                min-height: 120px;
-            }
-            .editor-header {
-                padding: 6px 10px;
-            }
-            .settings-page {
-                padding: 10px 12px;
-            }
-            .settings-page .settings-title {
-                font-size: 1rem;
-            }
-            .settings-page .setting-label {
-                font-size: 0.85rem;
-            }
-            .support-email {
-                font-size: 0.8rem;
-                padding: 5px 12px;
-            }
-            .donation-wrap iframe {
-                max-width: 200px;
-                height: 36px;
-            }
+            .brand-title { font-size: 1.1rem; }
+            .btn { font-size: 0.8rem; padding: 6px 12px; }
+            .note-item { padding: 12px; min-height: 56px; }
         }
 
-        /* Для устройств с сенсорным экраном — увеличенные области касания */
         @media (hover: none) and (pointer: coarse) {
-            .note-item {
-                min-height: 50px;
-            }
-            .btn {
-                min-height: 40px;
-            }
-            .settings-toggle {
-                min-height: 44px;
-                min-width: 44px;
-            }
-            .note-title-input {
-                min-height: 36px;
-            }
-            .settings-page .settings-close-btn {
-                min-height: 44px;
-                min-width: 44px;
-            }
-            .toggle-track {
-                min-height: 28px;
-                min-width: 50px;
-            }
-        }
-
-        /* Плавный скролл для всех элементов */
-        .notes-list,
-        .note-textarea,
-        .settings-page {
-            scroll-behavior: smooth;
-        }
-
-        /* Убираем скроллбар для эстетики (но оставляем функциональность) */
-        .notes-list::-webkit-scrollbar {
-            width: 4px;
-        }
-        .notes-list::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .notes-list::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-        .settings-page::-webkit-scrollbar {
-            width: 4px;
-        }
-        .settings-page::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .settings-page::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
+            .btn { min-height: 40px; }
+            .btn-icon { min-height: 40px; min-width: 40px; }
+            .note-item { min-height: 56px; }
+            .toggle-track { min-height: 30px; min-width: 54px; }
         }
     </style>
 </head>
-    <!-- Yandex.Metrika counter -->
+
+<!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
         m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -676,69 +779,113 @@
         for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=111663300', 'ym');
-
     ym(111663300, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/111663300" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
-<body>
 
-    <!-- Боковая панель -->
-    <div class="sidebar">
+<body>
+    <!-- Mobile Drawer Overlay -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="brand-title">
                 <span class="brand-you">You</span><span class="brand-rain">Rain</span>
             </div>
-            <div style="display: flex; gap: 6px; align-items: center;">
-                <button class="btn" id="add-btn">+ Новая</button>
-                <button class="settings-toggle" id="settings-toggle-btn" aria-label="Настройки">⚙</button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="btn" id="add-btn">
+                    <span>+</span>
+                    <span class="btn-text">Новая</span>
+                </button>
+                <button class="btn-icon" id="settings-toggle-btn" aria-label="Настройки" title="Настройки">⚙</button>
             </div>
         </div>
-        <ul class="notes-list" id="notes-list"></ul>
-    </div>
+        <div class="search-box">
+            <input type="text" class="search-input" id="search-input" placeholder="Поиск по заметкам...">
+        </div>
+        <ul class="notes-list" id="notes-list">
+            <li class="empty-list">
+                <div class="empty-list-icon">📝</div>
+                <div>Заметок пока нет</div>
+            </li>
+        </ul>
+    </aside>
 
-    <!-- Область редактора / настроек -->
-    <div class="main-content">
-        <!-- Редактор заметки -->
-        <div id="editor-container" class="editor-container hidden">
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Mobile Header -->
+        <header class="mobile-header">
+            <button class="btn-icon" id="menu-btn" aria-label="Меню">☰</button>
+            <div class="brand-title">
+                <span class="brand-you">You</span><span class="brand-rain">Rain</span>
+            </div>
+            <button class="btn-icon" id="mobile-add-btn" aria-label="Новая заметка">+</button>
+        </header>
+
+        <!-- Editor -->
+        <div id="editor-container" class="editor-container">
             <div class="editor-header">
-                <input type="text" class="note-title-input" id="note-title" placeholder="Без названия">
+                <div class="editor-meta">
+                    <input type="text" class="note-title-input" id="note-title" placeholder="Без названия">
+                    <div class="editor-info">
+                        <span id="editor-date"></span>
+                        <span class="save-indicator" id="save-indicator">Сохранено</span>
+                    </div>
+                </div>
                 <button class="btn btn-danger" id="delete-btn">Удалить</button>
             </div>
             <textarea class="note-textarea" id="note-body" placeholder="Начните писать здесь..."></textarea>
+            <div class="editor-footer">
+                <span id="char-count">0 символов</span>
+                <span id="word-count">0 слов</span>
+            </div>
         </div>
 
-        <!-- Плейсхолдер, когда нет активной заметки -->
-        <div id="placeholder-container" class="no-note-selected">
-            <p>Выберите заметку или создайте новую</p>
+        <!-- Placeholder -->
+        <div id="placeholder-container" class="no-note-selected visible">
+            <div class="placeholder-icon">📝</div>
+            <div class="placeholder-title">Нет выбранной заметки</div>
+            <div class="placeholder-hint">Выберите заметку из списка или создайте новую, чтобы начать писать</div>
         </div>
 
-        <!-- Страница настроек -->
+        <!-- Settings -->
         <div id="settings-page" class="settings-page">
             <div class="settings-header">
                 <span class="settings-title">Настройки</span>
-                <button class="settings-close-btn" id="settings-close-btn" aria-label="Закрыть настройки">✕</button>
+                <button class="btn-icon" id="settings-close-btn" aria-label="Закрыть">✕</button>
             </div>
             <div class="setting-group">
-                <!-- Тема -->
                 <div>
                     <div class="setting-row">
-                        <span class="setting-label">Тёмная тема</span>
-                        <div class="toggle-wrap">
-                            <div class="toggle-track" id="theme-toggle-track">
-                                <div class="toggle-thumb"></div>
-                            </div>
+                        <div class="setting-info">
+                            <span class="setting-label">Тёмная тема</span>
+                        </div>
+                        <div class="toggle-track" id="theme-toggle-track">
+                            <div class="toggle-thumb"></div>
                         </div>
                     </div>
-                    <div class="setting-description">Включите тёмную тему для комфортной работы в тёмное время суток</div>
+                    <div class="setting-description" style="padding-left: 0;">Включите тёмную тему для комфортной работы в тёмное время суток</div>
                 </div>
 
                 <hr class="settings-divider">
 
-                <!-- Пожертвования -->
+                <div>
+                    <span class="setting-label">Горячие клавиши</span>
+                    <div class="setting-description" style="margin-bottom: 12px;">Работают глобально, не конфликтуют с браузером</div>
+                    <div class="shortcut-list">
+                        <span class="shortcut-key">Ctrl+Shift+N</span><span>Новая заметка</span>
+                        <span class="shortcut-key">Ctrl+Shift+D</span><span>Удалить заметку</span>
+                        <span class="shortcut-key">Ctrl+Shift+O</span><span>Открыть настройки</span>
+                        <span class="shortcut-key">Esc</span><span>Закрыть окно / настройки</span>
+                    </div>
+                </div>
+
+                <hr class="settings-divider">
+
                 <div>
                     <span class="setting-label">Поддержать проект</span>
-                    <div class="setting-description" style="margin-bottom: 8px;">Ваша помощь помогает развивать приложение</div>
+                    <div class="setting-description" style="margin-bottom: 10px;">Ваша помощь помогает развивать приложение</div>
                     <div class="donation-wrap">
                         <iframe src="https://yoomoney.ru/quickpay/fundraise/button?billNumber=1JM0G8D2M7C.260815&" width="330" height="50" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
                     </div>
@@ -746,24 +893,44 @@
 
                 <hr class="settings-divider">
 
-                <!-- Контакт поддержки -->
                 <div>
                     <span class="setting-label">Служба поддержки</span>
-                    <div class="setting-description" style="margin-bottom: 6px;">По всем вопросам обращайтесь по электронной почте</div>
+                    <div class="setting-description" style="margin-bottom: 8px;">По всем вопросам обращайтесь по электронной почте</div>
                     <a href="mailto:support@yourain.ru" class="support-email">support@yourain.ru</a>
                 </div>
             </div>
         </div>
+    </main>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal">
+            <div class="modal-title">Удалить заметку?</div>
+            <div class="modal-text">Это действие нельзя отменить. Заметка будет удалена безвозвратно.</div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="modal-cancel">Отмена</button>
+                <button class="btn btn-danger" id="modal-confirm">Удалить</button>
+            </div>
+        </div>
     </div>
 
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
     <script>
-        // ===== DATA =====
+        // ===== State =====
         let notes = JSON.parse(localStorage.getItem('offline_notes')) || [];
         let activeNoteId = null;
+        let searchQuery = '';
+        let saveTimeout = null;
 
-        // DOM
+        // ===== DOM =====
+        const sidebar = document.getElementById('sidebar');
+        const drawerOverlay = document.getElementById('drawer-overlay');
         const notesList = document.getElementById('notes-list');
         const addBtn = document.getElementById('add-btn');
+        const mobileAddBtn = document.getElementById('mobile-add-btn');
+        const menuBtn = document.getElementById('menu-btn');
         const deleteBtn = document.getElementById('delete-btn');
         const noteTitle = document.getElementById('note-title');
         const noteBody = document.getElementById('note-body');
@@ -773,67 +940,122 @@
         const settingsToggleBtn = document.getElementById('settings-toggle-btn');
         const settingsCloseBtn = document.getElementById('settings-close-btn');
         const themeToggleTrack = document.getElementById('theme-toggle-track');
+        const searchInput = document.getElementById('search-input');
+        const editorDate = document.getElementById('editor-date');
+        const saveIndicator = document.getElementById('save-indicator');
+        const charCount = document.getElementById('char-count');
+        const wordCount = document.getElementById('word-count');
+        const deleteModal = document.getElementById('delete-modal');
+        const modalCancel = document.getElementById('modal-cancel');
+        const modalConfirm = document.getElementById('modal-confirm');
+        const toastContainer = document.getElementById('toast-container');
 
-        // ===== LOCAL STORAGE =====
+        // ===== Storage =====
         function saveToLocalStorage() {
             localStorage.setItem('offline_notes', JSON.stringify(notes));
         }
 
-        // ===== DATE =====
+        // ===== Date =====
         function formatDate(timestamp) {
             const date = new Date(timestamp);
-            return date.toLocaleDateString('ru-RU', {
-                day: '2-digit',
-                month: 'short',
-                hour: '2-digit',
-                minute: '2-digit'
+            const now = new Date();
+            const isToday = date.toDateString() === now.toDateString();
+            const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            if (isToday) return `Сегодня, ${timeStr}`;
+            return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + `, ${timeStr}`;
+        }
+        function formatFullDate(timestamp) {
+            return new Date(timestamp).toLocaleDateString('ru-RU', {
+                day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
             });
         }
 
-        // ===== RENDER LIST =====
+        // ===== Toast =====
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            const icons = { success: '✓', error: '✕', info: 'ℹ' };
+            toast.innerHTML = `<span>${icons[type] || 'ℹ'}</span><span>${message}</span>`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ===== Search =====
+        function getFilteredNotes() {
+            if (!searchQuery.trim()) return notes;
+            const q = searchQuery.toLowerCase();
+            return notes.filter(n => 
+                (n.title || '').toLowerCase().includes(q) || 
+                (n.body || '').toLowerCase().includes(q)
+            );
+        }
+
+        // ===== Render List =====
         function renderNotesList() {
+            const filtered = getFilteredNotes();
             notesList.innerHTML = '';
-            notes.sort((a, b) => b.updatedAt - a.updatedAt);
-            notes.forEach(note => {
+            
+            if (filtered.length === 0) {
+                const empty = document.createElement('li');
+                empty.className = 'empty-list';
+                empty.innerHTML = searchQuery 
+                    ? '<div class="empty-list-icon">🔍</div><div>Ничего не найдено</div>'
+                    : '<div class="empty-list-icon">📝</div><div>Заметок пока нет</div>';
+                notesList.appendChild(empty);
+                return;
+            }
+
+            filtered.sort((a, b) => b.updatedAt - a.updatedAt);
+            filtered.forEach(note => {
                 const li = document.createElement('li');
-                li.className = `note-item ${note.id === activeNoteId ? 'active' : ''}`;
+                li.className = `note-item ${note.id === activeNoteId ? 'active' : ''} animate-in`;
                 li.dataset.id = note.id;
 
                 const title = document.createElement('div');
                 title.className = 'note-item-title';
                 title.textContent = note.title.trim() || 'Без названия';
 
+                const preview = document.createElement('div');
+                preview.className = 'note-item-preview';
+                const bodyPreview = (note.body || '').replace(/\n/g, ' ').trim();
+                preview.textContent = bodyPreview || 'Нет содержимого';
+
                 const date = document.createElement('div');
                 date.className = 'note-item-date';
                 date.textContent = formatDate(note.updatedAt);
 
                 li.appendChild(title);
+                li.appendChild(preview);
                 li.appendChild(date);
-                li.addEventListener('click', () => selectNote(note.id));
+                li.addEventListener('click', () => {
+                    selectNote(note.id);
+                    if (window.innerWidth <= 640) closeDrawer();
+                });
                 notesList.appendChild(li);
             });
         }
 
-        // ===== SELECT NOTE =====
+        // ===== Select Note =====
         function selectNote(id) {
-            // Закрываем настройки, если открыты
             closeSettings();
-
             activeNoteId = id;
             const note = notes.find(n => n.id === id);
             if (note) {
                 noteTitle.value = note.title;
                 noteBody.value = note.body;
-                editorContainer.classList.remove('hidden');
-                placeholderContainer.classList.add('hidden');
+                editorDate.textContent = formatFullDate(note.updatedAt);
+                updateCounters();
+                editorContainer.classList.add('visible');
+                placeholderContainer.classList.remove('visible');
                 settingsPage.classList.remove('open');
             }
             renderNotesList();
         }
 
-        // ===== CREATE =====
+        // ===== Create =====
         function createNote() {
             closeSettings();
+            closeDrawer();
             const newNote = {
                 id: Date.now().toString(),
                 title: '',
@@ -842,14 +1064,14 @@
             };
             notes.unshift(newNote);
             saveToLocalStorage();
+            searchQuery = '';
+            searchInput.value = '';
             selectNote(newNote.id);
-            // Фокус на заголовок на мобильных устройствах
-            setTimeout(() => {
-                noteTitle.focus();
-            }, 300);
+            showToast('Заметка создана', 'success');
+            setTimeout(() => noteTitle.focus(), 100);
         }
 
-        // ===== UPDATE =====
+        // ===== Update =====
         function updateNote() {
             if (!activeNoteId) return;
             const note = notes.find(n => n.id === activeNoteId);
@@ -858,109 +1080,194 @@
                 note.body = noteBody.value;
                 note.updatedAt = Date.now();
                 saveToLocalStorage();
+                updateCounters();
 
+                // Show save indicator
+                saveIndicator.classList.add('visible');
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => saveIndicator.classList.remove('visible'), 1500);
+
+                // Update list item without full re-render
                 const activeItem = notesList.querySelector(`.note-item[data-id="${activeNoteId}"]`);
                 if (activeItem) {
                     activeItem.querySelector('.note-item-title').textContent = noteTitle.value.trim() || 'Без названия';
+                    activeItem.querySelector('.note-item-preview').textContent = (noteBody.value || '').replace(/\n/g, ' ').trim() || 'Нет содержимого';
                     activeItem.querySelector('.note-item-date').textContent = formatDate(note.updatedAt);
                 }
             }
         }
 
-        // ===== DELETE =====
-        function deleteNote() {
+        function updateCounters() {
+            const text = noteBody.value || '';
+            const chars = text.length;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            charCount.textContent = `${chars} ${decline(chars, 'символ', 'символа', 'символов')}`;
+            wordCount.textContent = `${words} ${decline(words, 'слово', 'слова', 'слов')}`;
+        }
+
+        function decline(n, one, two, many) {
+            const mod10 = n % 10;
+            const mod100 = n % 100;
+            if (mod10 === 1 && mod100 !== 11) return one;
+            if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) return two;
+            return many;
+        }
+
+        // ===== Delete =====
+        function promptDelete() {
             if (!activeNoteId) return;
-            closeSettings();
+            deleteModal.classList.add('open');
+        }
+
+        function confirmDelete() {
+            if (!activeNoteId) return;
             notes = notes.filter(n => n.id !== activeNoteId);
             saveToLocalStorage();
             activeNoteId = null;
-            editorContainer.classList.add('hidden');
-            placeholderContainer.classList.remove('hidden');
+            editorContainer.classList.remove('visible');
+            placeholderContainer.classList.add('visible');
             renderNotesList();
+            deleteModal.classList.remove('open');
+            showToast('Заметка удалена', 'success');
         }
 
-        // ===== ТЕМА =====
+        function cancelDelete() {
+            deleteModal.classList.remove('open');
+        }
+
+        // ===== Theme =====
         function setTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add('dark-theme');
-                themeToggleTrack.classList.add('active');
-            } else {
-                document.body.classList.remove('dark-theme');
-                themeToggleTrack.classList.remove('active');
-            }
+            document.body.classList.toggle('dark-theme', isDark);
+            themeToggleTrack.classList.toggle('active', isDark);
             localStorage.setItem('yourain_theme', isDark ? 'dark' : 'light');
         }
-
         function toggleTheme() {
-            const isDark = document.body.classList.contains('dark-theme');
-            setTheme(!isDark);
+            setTheme(!document.body.classList.contains('dark-theme'));
         }
-
-        // Загружаем сохранённую тему
         const savedTheme = localStorage.getItem('yourain_theme');
-        if (savedTheme === 'dark') {
-            setTheme(true);
-        } else {
-            setTheme(false);
-        }
+        setTheme(savedTheme === 'dark');
 
-        // ===== УПРАВЛЕНИЕ НАСТРОЙКАМИ (открыть/закрыть) =====
+        // ===== Settings =====
         function openSettings() {
-            // Скрываем редактор и плейсхолдер, показываем настройки
-            editorContainer.classList.add('hidden');
-            placeholderContainer.classList.add('hidden');
+            editorContainer.classList.remove('visible');
+            placeholderContainer.classList.remove('visible');
             settingsPage.classList.add('open');
-            // Снимаем выделение с заметок
             activeNoteId = null;
             renderNotesList();
+            closeDrawer();
         }
-
         function closeSettings() {
             settingsPage.classList.remove('open');
-            // Показываем либо редактор, либо плейсхолдер
             if (activeNoteId) {
-                editorContainer.classList.remove('hidden');
-                placeholderContainer.classList.add('hidden');
+                editorContainer.classList.add('visible');
+                placeholderContainer.classList.remove('visible');
             } else {
-                editorContainer.classList.add('hidden');
-                placeholderContainer.classList.remove('hidden');
+                editorContainer.classList.remove('visible');
+                placeholderContainer.classList.add('visible');
             }
         }
 
-        // Обработчики открытия/закрытия
-        settingsToggleBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (settingsPage.classList.contains('open')) {
-                closeSettings();
-            } else {
-                openSettings();
+        // ===== Drawer =====
+        function openDrawer() {
+            sidebar.classList.add('open');
+            drawerOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeDrawer() {
+            sidebar.classList.remove('open');
+            drawerOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // ===== Keyboard Shortcuts (fixed conflicts) =====
+        document.addEventListener('keydown', (e) => {
+            const mod = e.ctrlKey || e.metaKey;
+            const key = e.key.toLowerCase();
+
+            // Global shortcuts (work everywhere except when typing in inputs without modifiers)
+            if (mod && e.shiftKey) {
+                if (key === 'n') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    createNote();
+                    return;
+                }
+                if (key === 'd') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (activeNoteId) promptDelete();
+                    return;
+                }
+                if (key === 'o') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openSettings();
+                    return;
+                }
+            }
+
+            // Escape closes modals and settings
+            if (key === 'escape') {
+                if (deleteModal.classList.contains('open')) {
+                    e.preventDefault();
+                    cancelDelete();
+                    return;
+                }
+                if (settingsPage.classList.contains('open')) {
+                    e.preventDefault();
+                    closeSettings();
+                    return;
+                }
+                // On mobile, close drawer
+                if (sidebar.classList.contains('open')) {
+                    e.preventDefault();
+                    closeDrawer();
+                    return;
+                }
+            }
+
+            // Enter confirms delete modal
+            if (key === 'enter' && deleteModal.classList.contains('open')) {
+                e.preventDefault();
+                confirmDelete();
+                return;
             }
         });
 
-        settingsCloseBtn.addEventListener('click', closeSettings);
-
-        // ===== EVENT LISTENERS =====
+        // ===== Event Listeners =====
         addBtn.addEventListener('click', createNote);
-        deleteBtn.addEventListener('click', deleteNote);
+        mobileAddBtn.addEventListener('click', createNote);
+        menuBtn.addEventListener('click', openDrawer);
+        drawerOverlay.addEventListener('click', closeDrawer);
+        deleteBtn.addEventListener('click', promptDelete);
+        modalConfirm.addEventListener('click', confirmDelete);
+        modalCancel.addEventListener('click', cancelDelete);
+        deleteModal.addEventListener('click', (e) => { if (e.target === deleteModal) cancelDelete(); });
+
         noteTitle.addEventListener('input', updateNote);
         noteBody.addEventListener('input', updateNote);
         noteTitle.addEventListener('blur', renderNotesList);
         noteBody.addEventListener('blur', renderNotesList);
 
-        themeToggleTrack.addEventListener('click', toggleTheme);
-
-        // Поддержка тач-событий для тумблера
-        themeToggleTrack.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            toggleTheme();
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderNotesList();
         });
 
-        // ===== INIT =====
+        themeToggleTrack.addEventListener('click', toggleTheme);
+        themeToggleTrack.addEventListener('touchstart', (e) => { e.preventDefault(); toggleTheme(); });
+
+        settingsToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (settingsPage.classList.contains('open')) closeSettings();
+            else openSettings();
+        });
+        settingsCloseBtn.addEventListener('click', closeSettings);
+
+        // ===== Init =====
+        renderNotesList();
         if (notes.length > 0) {
             selectNote(notes[0].id);
-        } else {
-            placeholderContainer.classList.remove('hidden');
-            editorContainer.classList.add('hidden');
         }
     </script>
 </body>
